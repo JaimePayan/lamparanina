@@ -1,0 +1,94 @@
+esphome:
+  name: $nombre
+  platform: ESP32
+  board: nodemcu-32s
+  
+esp32_ble_tracker:
+
+wifi:
+  ssid: "PayanLozano"
+  password: "Regina117"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: $apssid
+    password: $appsw
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+web_server:
+  port: 80
+
+ota:
+
+sensor:
+  - platform: xiaomi_lywsd03mmc
+    mac_address: "A4:C1:38:84:59:0F"
+    bindkey: "0ea25809f7d6f8cf280ea94f947e0326"
+    temperature:
+      name: $temperatura
+    humidity:
+      name: $humedad
+    battery_level:
+      name: $bateria
+
+binary_sensor:
+  - platform: gpio
+    pin: 
+      number: 19
+      mode: INPUT_PULLUP
+      inverted: true
+    name: $boton
+    on_release:
+      then:
+        if:
+          condition:
+            light.is_off: led_lampara_bebe
+          then:
+            - light.turn_on:
+                id: led_lampara_bebe
+                brightness: 100%
+          else:
+            - light.turn_off:
+                id: led_lampara_bebe
+
+
+    
+light:
+  - platform: neopixelbus
+    type: GRB
+    pin: 17
+    num_leds: 18
+    variant: WS2812
+    name: $luz
+    id: led_lampara_bebe
+    effects:
+      - pulse:
+      - random:
+      - strobe:
+      - flicker:
+      - addressable_rainbow:
+      - addressable_color_wipe:
+      - addressable_scan:
+      - addressable_twinkle:
+      - addressable_fireworks:
+      - addressable_flicker:
+      - addressable_color_wipe:
+          name: Color Wipe Effect BLUE
+          colors:
+            - red: 0%
+              green: 0%
+              blue: 100%
+              num_leds: 6
+            - red: 0%
+              green: 0%
+              blue: 0%
+              num_leds: 6
+          add_led_interval: 100ms
+          reverse: false
